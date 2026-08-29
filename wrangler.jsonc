@@ -117,8 +117,8 @@
 	"d1_databases": [
 		{
 			"binding": "DB",
-			"database_name": "vibeship-db",
-			"database_id": "set-by-bun-run-setup",
+			"database_name": "vibeship_db",
+			"database_id": "5108e39f-e1e2-4155-9e60-37206d7163ab",
 			"migrations_dir": "migrations"
 		}
 	],
@@ -164,7 +164,7 @@
     "kv_namespaces": [
         {
             "binding": "VibecoderStore",
-            "id": "set-by-bun-run-setup"
+            "id": "730a2dbca16442c9bb664cf641a58b48"
         }
     ],
     // "placement": {

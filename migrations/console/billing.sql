@@ -2,7 +2,7 @@
 -- Съответства на migrations/0009_military_rocket_raccoon.sql
 --
 -- Пусни това в конзолата на D1 (Cloudflare Dashboard → Storage & Databases →
--- D1 → vibeship-db → Console), АКО базата вече има таблиците на платформата
+-- D1 → vibeship_db → Console), АКО базата вече има таблиците на платформата
 -- (users, apps и т.н.). За празна база ползвай full_schema.sql вместо това.
 --
 -- Всички заявки са с IF NOT EXISTS, така че повторно пускане е безобидно.

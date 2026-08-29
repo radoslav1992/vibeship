@@ -3,7 +3,7 @@
 Готови за копиране файлове, ако предпочиташ да пуснеш схемата от
 Cloudflare Dashboard вместо с `wrangler`.
 
-Път в таблото: **Storage & Databases → D1 → vibeship-db → Console**.
+Път в таблото: **Storage & Databases → D1 → vibeship_db → Console**.
 
 | Файл | Кога |
 |---|---|
