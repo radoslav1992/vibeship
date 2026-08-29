@@ -89,12 +89,17 @@
             "remote": true
         }
     ],
-    "artifacts": [
-        {
-            "binding": "ARTIFACTS",
-            "namespace": "vibeship-production"
-        }
-    ],
+    // Cloudflare Artifacts е в затворена бета. Акаунт без достъп не може да
+    // публикува Worker, който декларира биндинга — `wrangler deploy` връща
+    // грешка 10015. Затова биндингът стои коментиран: функцията така или
+    // иначе е изключена, докато ENABLE_ARTIFACTS не е "true".
+    // Ако акаунтът има достъп: разкоментирай и сложи ENABLE_ARTIFACTS="true".
+    // "artifacts": [
+    //     {
+    //         "binding": "ARTIFACTS",
+    //         "namespace": "vibeship-production"
+    //     }
+    // ],
 	"containers": [
 		{
 			"class_name": "UserAppSandboxService",
