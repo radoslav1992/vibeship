@@ -115,11 +115,21 @@
 			"image": "./SandboxDockerfile",
             // "image": "registry.cloudflare.com/vibeship-production-userappsandboxservice:cfe197fc",
             // Altering max_instances value will have no effect. Please use the MAX_SANDBOX_INSTANCES var instead.
-			"max_instances": 1400,
+			// Смъкнато от 1400 (мащабът на Cloudflare) до стойността на
+			// MAX_SANDBOX_INSTANCES — това е таван, а не резервация.
+			"max_instances": 10,
             // ATTENTION: Altering instance_type value will have no effect. Please use the SANDBOX_INSTANCE_TYPE var instead.
+            // Cloudflare изисква поне 3 GiB памет на всяко от първите 4
+            // vCPU, тоест 4 vCPU с 8 GiB не минава валидацията.
+            // Vibeship работи с behaviorType "think", а той няма sandbox:
+            // прегледите минават през SpaceDO и Worker Loader (виж
+            // коментара над deployToSandbox в
+            // worker/agents/core/behaviors/think.ts). Затова контейнерът
+            // стои в най-малката валидна конфигурация — нужен е само на
+            // наследеното "phasic" поведение.
             "instance_type": {
-                "vcpu": 4,
-                "memory_mib": 8192,
+                "vcpu": 1,
+                "memory_mib": 4096,
                 "disk_mb": 10240
             },
             "rollout_step_percentage": 100,
