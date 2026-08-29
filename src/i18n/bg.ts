@@ -185,7 +185,7 @@ export const bg: Dictionary = {
 	'deploy.cloudflare': 'Cloudflare акаунт',
 	'deploy.cloudflareConnect': 'Свържи Cloudflare',
 	'deploy.cloudflareDomains': 'Домейни',
-	'deploy.cloudflareSecrets': 'Тайни ({count})',
+	'deploy.cloudflareSecrets': 'Тайни',
 	'deploy.cloudflareNotConnected':
 		'Свържи своя Cloudflare акаунт, за да публикуваш приложението на собствена сметка и домейн.',
 	'deploy.inProgress': 'Публикуване в момента',

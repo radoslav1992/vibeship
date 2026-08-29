@@ -175,7 +175,7 @@ export const en: Dictionary = {
 	'deploy.cloudflare': 'Cloudflare account',
 	'deploy.cloudflareConnect': 'Connect Cloudflare',
 	'deploy.cloudflareDomains': 'Domains',
-	'deploy.cloudflareSecrets': 'Secrets ({count})',
+	'deploy.cloudflareSecrets': 'Secrets',
 	'deploy.cloudflareNotConnected':
 		'Connect your Cloudflare account to publish the app on your own bill and domain.',
 	'deploy.inProgress': 'Deploying now',

@@ -79,18 +79,50 @@ flowchart LR
 
 Нужни са:
 
-- Cloudflare акаунт с платен план за Workers и достъп до Workers for Platforms;
+- Cloudflare акаунт с платен план за Workers;
 - Cloudflare API токен с права за ресурсите, които `setup` създава;
-- ключ поне за един поддържан доставчик на модели (или ключове в AI Gateway);
-- собствен домейн с wildcard DNS за продукция;
-- (по избор) Stripe акаунт, ако искаш платени планове.
+- собствен домейн за продукция (без домейн се работи на `workers.dev`);
+- (по избор) Stripe акаунт, ако искаш платени планове;
+- (по избор) Workers for Platforms — виж „Какво е опционално“ по-долу.
+
+Ключ за доставчик на модели **не е задължителен**: ако не е зададен
+`<ДОСТАВЧИК>_API_KEY`, Worker-ът се удостоверява пред AI Gateway със самия
+Cloudflare токен (`worker/agents/inferutils/core.ts`, `getApiKey`), а ключовете
+на доставчика живеят в самия gateway.
+
+### Вариант А: всичко с wrangler
 
 ```bash
 bun install
 bun run setup        # създава D1, KV, R2, dispatch namespace, AI Gateway и попълва wrangler.jsonc
 bun run db:migrate:remote
-bun run deploy
+bun run deploy       # + създава dispatch namespace и качва шаблоните в R2
 ```
+
+### Вариант Б: публикуване през GitHub интеграцията на Cloudflare
+
+Интеграцията пуска обикновен `wrangler deploy`, който **само чете**
+`wrangler.jsonc` — не създава ресурси и не качва шаблони. Затова ресурсите се
+подготвят веднъж, а нататък всяко merge публикува само по себе си.
+
+1. Създай ръчно D1, KV, R2 кофата `vibeship-templates` (и dispatch namespace,
+   ако имаш Workers for Platforms).
+2. Впиши `database_id` и KV `id` в `wrangler.jsonc`.
+3. Приложи схемата: `bun run db:migrate:remote` **или** SQL от
+   [`migrations/console/`](migrations/console/) в конзолата на D1. Двата пътя
+   не се смесват — README-то там обяснява защо.
+4. Свържи репото към Worker-а и публикувай.
+5. Добави `CLOUDFLARE_API_TOKEN` и `CLOUDFLARE_ACCOUNT_ID` като secrets на
+   Worker-а. Те не трябват при публикуване, но без тях приложението гърми,
+   щом потребител натисне „Публикувай“.
+
+### Какво е опционално
+
+| Ресурс | Без него |
+|---|---|
+| Workers for Platforms | Прегледите работят (SpaceDO и Worker Loader), а публикуването отива в акаунта на потребителя. Липсва само хостване върху поддомейните на платформата. Биндингът стои коментиран в `wrangler.jsonc`. |
+| Cloudflare Artifacts | Затворена бета. Биндингът е коментиран, защото иначе `wrangler deploy` връща 10015. |
+| Шаблони в R2 | Deploy-ът минава, но агентът няма от какво да тръгне при нов проект. Качват се с `bun run deploy`. |
 
 За локална разработка:
 
