@@ -151,7 +151,7 @@ export default function DeployPage() {
 										{t('deploy.cloudflareDomains')}
 									</VsButton>
 									<VsButton variant="outline" onClick={() => navigate('/settings')}>
-										{t('deploy.cloudflareSecrets', { count: 0 })}
+										{t('deploy.cloudflareSecrets')}
 									</VsButton>
 								</div>
 							</>
