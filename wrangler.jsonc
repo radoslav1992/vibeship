@@ -82,19 +82,33 @@
 		"binding": "BROWSER",
 		"remote": true
 	},
-    "dispatch_namespaces": [
-        {
-            "binding": "DISPATCHER",
-            "namespace": "vibeship-default-namespace",
-            "remote": true
-        }
-    ],
-    "artifacts": [
-        {
-            "binding": "ARTIFACTS",
-            "namespace": "vibeship-production"
-        }
-    ],
+    // Workers for Platforms е платена добавка. Без абонамент wrangler не може
+    // да разреши биндинга и deploy-ът гърми (код 10121), затова стои коментиран.
+    // Кодът е подготвен за това: `isDispatcherAvailable()` в
+    // worker/utils/dispatcherUtils.ts връща false и приложението продължава
+    // да работи — прегледите минават през SpaceDO и Worker Loader, а
+    // публикуването отива в собствения Cloudflare акаунт на потребителя.
+    // Липсва само хостването на готови приложения върху нашите поддомейни.
+    // Ако акаунтът вземе Workers for Platforms: разкоментирай и създай
+    // namespace-а с `wrangler dispatch-namespace create vibeship-default-namespace`.
+    // "dispatch_namespaces": [
+    //     {
+    //         "binding": "DISPATCHER",
+    //         "namespace": "vibeship-default-namespace",
+    //         "remote": true
+    //     }
+    // ],
+    // Cloudflare Artifacts е в затворена бета. Акаунт без достъп не може да
+    // публикува Worker, който декларира биндинга — `wrangler deploy` връща
+    // грешка 10015. Затова биндингът стои коментиран: функцията така или
+    // иначе е изключена, докато ENABLE_ARTIFACTS не е "true".
+    // Ако акаунтът има достъп: разкоментирай и сложи ENABLE_ARTIFACTS="true".
+    // "artifacts": [
+    //     {
+    //         "binding": "ARTIFACTS",
+    //         "namespace": "vibeship-production"
+    //     }
+    // ],
 	"containers": [
 		{
 			"class_name": "UserAppSandboxService",
@@ -117,8 +131,8 @@
 	"d1_databases": [
 		{
 			"binding": "DB",
-			"database_name": "vibeship-db",
-			"database_id": "set-by-bun-run-setup",
+			"database_name": "vibeship_db",
+			"database_id": "5108e39f-e1e2-4155-9e60-37206d7163ab",
 			"migrations_dir": "migrations"
 		}
 	],
@@ -164,7 +178,7 @@
     "kv_namespaces": [
         {
             "binding": "VibecoderStore",
-            "id": "set-by-bun-run-setup"
+            "id": "730a2dbca16442c9bb664cf641a58b48"
         }
     ],
     // "placement": {
