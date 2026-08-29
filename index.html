@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="bg">
+	<head>
+		<meta charset="UTF-8" />
+		<link rel="icon" href="/favicon.ico" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+			rel="stylesheet"
+		/>
+		<link
+			rel="preload"
+			href="/fonts/DepartureMono-Regular.woff2"
+			as="font"
+			type="font/woff2"
+			crossorigin
+		/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' blob: https://cdnjs.cloudflare.com https://cdn.tailwindcss.com https://esm.sh https://static.cloudflareinsights.com https://js.stripe.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' wss: ws: http: https:; frame-src 'self' http://*.localhost:* https://*;" />
+		<title>Vibeship — от идея на български до приложение в Cloudflare</title>
+		<meta
+			name="description"
+			content="Опиши идеята си на български, а Vibeship изгражда истинско full-stack приложение, качва кода в твоето GitHub репо и го публикува в Cloudflare."
+		/>
+		<script>
+			(function () {
+				try {
+					var stored = localStorage.getItem('theme');
+					var theme =
+						stored === 'light' || stored === 'dark' || stored === 'system'
+							? stored
+							: 'dark';
+					var resolved =
+						theme === 'system'
+							? window.matchMedia('(prefers-color-scheme: dark)').matches
+								? 'dark'
+								: 'light'
+							: theme;
+					document.documentElement.dataset.mode = resolved;
+					document.documentElement.style.colorScheme = resolved;
+				} catch (_) {}
+			})();
+		</script>
+	</head>
+	<body>
+		<div id="root"></div>
+		<script type="module" src="/src/main.tsx"></script>
+	</body>
+</html>
