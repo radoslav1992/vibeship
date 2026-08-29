@@ -4,6 +4,7 @@
  */
 
 import { Loader2, LucideGlobeLock } from 'lucide-react';
+import { useT } from '@/i18n';
 import { useNavigate } from 'react-router';
 import { cn, Button, DropdownMenu } from '@cloudflare/kumo';
 import { useAuth } from '../../contexts/auth-context';
@@ -21,36 +22,39 @@ interface AuthButtonProps {
 	display?: 'icon' | 'sidebar';
 }
 
-function getLimitsStatusText(limits: UsageLimitsBadgeState) {
-	if (limits.loading) return 'Checking credits...';
-	if (limits.needsConfiguration) return 'Configure AI Gateway';
+type Translate = (key: string) => string;
+
+function getLimitsStatusText(limits: UsageLimitsBadgeState, t: Translate) {
+	if (limits.loading) return t('limits.checking');
+	if (limits.needsConfiguration) return t('limits.configureGateway');
 	if (limits.showCredits) return limits.creditsText;
 	if (limits.isExhausted && !limits.hasUserToken)
-		return 'Free limit exhausted';
+		return t('limits.freeExhausted');
 	if (limits.showUsage && !limits.isExhausted) return limits.usageText;
-	return 'Connect Cloudflare';
+	return t('limits.connectCloudflare');
 }
 
-function getLimitsDetailText(limits: UsageLimitsBadgeState) {
-	if (limits.loading) return 'Loading your usage status';
-	if (limits.needsConfiguration) return 'Select an account and AI Gateway';
+function getLimitsDetailText(limits: UsageLimitsBadgeState, t: Translate) {
+	if (limits.loading) return t('limits.loadingStatus');
+	if (limits.needsConfiguration) return t('limits.selectAccount');
 	if (limits.showCredits && limits.showUsage && !limits.isExhausted)
 		return limits.usageText;
-	if (limits.showCredits) return 'Connected to AI Gateway';
+	if (limits.showCredits) return t('limits.connectedGateway');
 	if (limits.isExhausted && !limits.hasUserToken)
-		return 'Connect Cloudflare to continue building';
-	if (limits.showUsage && !limits.isExhausted) return 'Free tier usage';
-	return 'Use your Cloudflare AI Gateway credits';
+		return t('limits.connectToContinue');
+	if (limits.showUsage && !limits.isExhausted) return t('limits.freeTierUsage');
+	return t('limits.useOwnCredits');
 }
 
 export function AuthButton({ className, display = 'icon' }: AuthButtonProps) {
+	const t = useT();
 	const { user, isAuthenticated, isLoading, logout } = useAuth();
 
 	const navigate = useNavigate();
 	const usageLimits = useUsageLimitsBadgeState();
 	const showLimitsState = !usageLimits.hidden;
-	const limitsStatusText = getLimitsStatusText(usageLimits);
-	const limitsDetailText = getLimitsDetailText(usageLimits);
+	const limitsStatusText = getLimitsStatusText(usageLimits, t);
+	const limitsDetailText = getLimitsDetailText(usageLimits, t);
 	const limitsStatusClassName = cn(
 		'text-kumo-subtle',
 		usageLimits.needsConfiguration && 'text-amber-500',

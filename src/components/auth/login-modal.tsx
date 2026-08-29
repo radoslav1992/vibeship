@@ -4,6 +4,7 @@
  */
 
 import { useState } from 'react';
+import { useT } from '@/i18n';
 import {
 	Banner,
 	Button,
@@ -65,6 +66,7 @@ export function LoginModal({
 	actionContext,
 	showCloseButton = true,
 }: LoginModalProps) {
+	const t = useT();
 	const { authProviders, hasOAuth } = useAuth();
 	const [mode, setMode] = useState<AuthMode>('login');
 	const [showPassword, setShowPassword] = useState(false);
@@ -125,37 +127,37 @@ export function LoginModal({
 		// Basic email validation
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		if (!email.trim()) {
-			errors.email = 'Email is required';
+			errors.email = t('authModal.err.emailRequired');
 		} else if (!emailRegex.test(email)) {
-			errors.email = 'Invalid email format';
+			errors.email = t('authModal.err.emailInvalid');
 		}
 
 		// Basic password validation
 		if (!password) {
-			errors.password = 'Password is required';
+			errors.password = t('authModal.err.passwordRequired');
 		} else if (password.length < 8) {
-			errors.password = 'Password must be at least 8 characters';
+			errors.password = t('authModal.err.passwordMin');
 		}
 
 		// Additional validation for registration
 		if (mode === 'register') {
 			// Name validation
 			if (!name.trim()) {
-				errors.name = 'Name is required';
+				errors.name = t('authModal.err.nameRequired');
 			} else if (name.trim().length < 2) {
-				errors.name = 'Name must be at least 2 characters';
+				errors.name = t('authModal.err.nameMin');
 			}
 
 			const passwordStrengthRegex =
 				/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/;
 			if (!passwordStrengthRegex.test(password)) {
 				errors.password =
-					'Password must include at least one uppercase letter, one lowercase letter, one number, and one special character';
+					t('authModal.err.passwordComplex');
 			}
 
 			// Confirm password validation
 			if (password !== confirmPassword) {
-				errors.confirmPassword = 'Passwords do not match';
+				errors.confirmPassword = t('authModal.err.passwordsMismatch');
 			}
 		}
 
@@ -197,16 +199,16 @@ export function LoginModal({
 	};
 
 	const title = actionContext
-		? `Sign in ${actionContext}`
+		? t('authModal.titleAction', { context: actionContext })
 		: hasEmailAuth && mode === 'register'
-			? 'Create an account'
-			: 'Welcome back';
+			? t('authModal.titleRegister')
+			: t('authModal.titleLogin');
 
 	const description = actionContext
-		? 'Authentication required for this action'
+		? t('authModal.descAction')
 		: hasEmailAuth && mode === 'register'
-			? 'Join to start building amazing applications'
-			: 'Sign in to save your apps and access your workspace';
+			? t('authModal.descRegister')
+			: t('authModal.descLogin');
 
 	return (
 		<Dialog.Root open={isOpen} onOpenChange={handleOpenChange}>
@@ -215,7 +217,7 @@ export function LoginModal({
 				<div className="relative p-6 pb-0">
 					{showCloseButton && (
 						<Dialog.Close
-							aria-label="Close dialog"
+							aria-label={t('authModal.close')}
 							render={(props) => (
 								<Button
 									{...props}
@@ -288,7 +290,7 @@ export function LoginModal({
 								</svg>
 							}
 						>
-							Continue with GitHub
+							{t('authModal.continueGithub')}
 						</Button>
 					)}
 
@@ -320,7 +322,7 @@ export function LoginModal({
 								</svg>
 							}
 						>
-							Continue with Google
+							{t('authModal.continueGoogle')}
 						</Button>
 					)}
 
@@ -333,7 +335,7 @@ export function LoginModal({
 							onClick={() => handleOAuthClick('cloudflare')}
 							icon={<CloudflareLogo className="h-5 w-5" />}
 						>
-							Continue with Cloudflare
+							{t('authModal.continueCloudflare')}
 						</Button>
 					)}
 
@@ -362,7 +364,7 @@ export function LoginModal({
 									<Input
 										label="Full name"
 										type="text"
-										placeholder="Full name"
+										placeholder={t('authModal.fullName')}
 										value={name}
 										onChange={(e) =>
 											setName(e.target.value)
@@ -379,7 +381,7 @@ export function LoginModal({
 								<Input
 									label="Email address"
 									type="email"
-									placeholder="Email address"
+									placeholder={t('authModal.email')}
 									value={email}
 									onChange={(e) => setEmail(e.target.value)}
 									error={validationErrors.email}
@@ -407,7 +409,7 @@ export function LoginModal({
 										type={
 											showPassword ? 'text' : 'password'
 										}
-										placeholder="Password"
+										placeholder={t('authModal.password')}
 										value={password}
 										onChange={(e) =>
 											setPassword(e.target.value)
@@ -424,8 +426,8 @@ export function LoginModal({
 											variant="ghost"
 											tooltip={
 												showPassword
-													? 'Hide password'
-													: 'Show password'
+													? t('authModal.hidePassword')
+													: t('authModal.showPassword')
 											}
 											onClick={() =>
 												setShowPassword(!showPassword)
@@ -433,8 +435,8 @@ export function LoginModal({
 											disabled={isLoading}
 											aria-label={
 												showPassword
-													? 'Hide password'
-													: 'Show password'
+													? t('authModal.hidePassword')
+													: t('authModal.showPassword')
 											}
 											icon={
 												showPassword
@@ -451,7 +453,7 @@ export function LoginModal({
 									<Input
 										label="Confirm password"
 										type="password"
-										placeholder="Confirm password"
+										placeholder={t('authModal.confirmPassword')}
 										value={confirmPassword}
 										onChange={(e) =>
 											setConfirmPassword(e.target.value)
@@ -471,11 +473,11 @@ export function LoginModal({
 							>
 								{isLoading
 									? mode === 'register'
-										? 'Creating account...'
-										: 'Signing in...'
+										? t('authModal.creating')
+										: t('authModal.signingIn')
 									: mode === 'register'
-										? 'Create account'
-										: 'Sign in'}
+										? t('authModal.createAccount')
+										: t('authModal.signIn')}
 							</OrangeButton>
 						</form>
 					)}
@@ -496,8 +498,8 @@ export function LoginModal({
 								className="text-sm text-kumo-subtle hover:text-kumo-default transition-colors"
 							>
 								{mode === 'login'
-									? "Don't have an account? Sign up"
-									: 'Already have an account? Sign in'}
+									? t('authModal.toRegister')
+									: t('authModal.toLogin')}
 							</button>
 						</div>
 					)}
