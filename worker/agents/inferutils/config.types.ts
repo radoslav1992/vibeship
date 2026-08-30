@@ -337,6 +337,61 @@ const MODELS_MASTER = {
             creditCost: 8, // $0.22
             contextSize: 262144, // 256K Context
         },
+    },
+
+    // --- Workers AI (модели на самия Cloudflare) ---
+    //
+    // Тези вървят на инфраструктурата на Cloudflare и се плащат по сметката
+    // на Cloudflare, тоест не искат ключ от трета страна. Маршрутизират се
+    // през AI Gateway с доставчик `workers-ai`, а удостоверяването е със
+    // CLOUDFLARE_AI_GATEWAY_TOKEN или CLOUDFLARE_API_TOKEN.
+    //
+    // Никой от тях не е по подразбиране: отворените модели се справят
+    // по-слабо с дългия цикъл инструменти → редакция → поправка, който
+    // агентът върти. Ползвай ги, когато искаш всичко да остане в Cloudflare,
+    // или за по-евтините стъпки (избор на шаблон, кратки поправки).
+    //
+    // Идентификаторите трябва да съвпадат с каталога на Workers AI в акаунта:
+    // https://developers.cloudflare.com/workers-ai/models/
+    WORKERS_AI_LLAMA_3_3_70B: {
+        id: 'workers-ai/@cf/meta/llama-3.3-70b-instruct-fp8-fast',
+        config: {
+            name: 'Workers AI · Llama 3.3 70B',
+            size: ModelSize.REGULAR,
+            provider: 'workers-ai',
+            creditCost: 1,
+            contextSize: 24000,
+        }
+    },
+    WORKERS_AI_QWEN_CODER_32B: {
+        id: 'workers-ai/@cf/qwen/qwen2.5-coder-32b-instruct',
+        config: {
+            name: 'Workers AI · Qwen 2.5 Coder 32B',
+            size: ModelSize.REGULAR,
+            provider: 'workers-ai',
+            creditCost: 1,
+            contextSize: 32768,
+        }
+    },
+    WORKERS_AI_GPT_OSS_120B: {
+        id: 'workers-ai/@cf/openai/gpt-oss-120b',
+        config: {
+            name: 'Workers AI · GPT OSS 120B',
+            size: ModelSize.REGULAR,
+            provider: 'workers-ai',
+            creditCost: 1,
+            contextSize: 128000,
+        }
+    },
+    WORKERS_AI_LLAMA_4_SCOUT: {
+        id: 'workers-ai/@cf/meta/llama-4-scout-17b-16e-instruct',
+        config: {
+            name: 'Workers AI · Llama 4 Scout 17B',
+            size: ModelSize.LITE,
+            provider: 'workers-ai',
+            creditCost: 0.5,
+            contextSize: 131072,
+        }
     }
 } as const;
 
