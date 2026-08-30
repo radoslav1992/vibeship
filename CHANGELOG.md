@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.0.0 (2026-08-30)
+
+
+### Features
+
+* Workers AI през binding-а, върнати кредити при провал и запазен CUSTOM_DOMAIN ([bb4da7c](https://github.com/radoslav1992/vibeship/commit/bb4da7cc57c73a4d5e4935411137f842b4611f40))
+* българска vibe coding платформа Vibeship върху Cloudflare VibeSDK ([38098a2](https://github.com/radoslav1992/vibeship/commit/38098a2d01e18f9670e67f7f6ea43551e2b542fd))
+* българска vibe coding платформа Vibeship върху Cloudflare VibeSDK ([7b8fb95](https://github.com/radoslav1992/vibeship/commit/7b8fb95130f0eed08562b667a0acd019ab6314cd))
+* пуска моделите на Workers AI през binding-а вместо през AI Gateway ([669c021](https://github.com/radoslav1992/vibeship/commit/669c0219b4b16fbd9b5b7aa27fb1d5f4444709ca))
+
+
+### Bug Fixes
+
+* връща кредитите при непочнало генериране и добавя Workers AI модели ([5269d92](https://github.com/radoslav1992/vibeship/commit/5269d923fa613e9f8b198bdc019bec1cc118a0b6))
+* маха ARTIFACTS биндинга, за да минава обикновен wrangler deploy ([74122e9](https://github.com/radoslav1992/vibeship/commit/74122e96c85389c5c30a80339a5ddef3cb04583d))
+* маха DISPATCHER биндинга, докато няма Workers for Platforms ([6cfb1c0](https://github.com/radoslav1992/vibeship/commit/6cfb1c05b97acf6ca45d6a53dd035fdc8b354188))
+* маха подвеждащия брой тайни и описва двата пътя за публикуване ([fcbb7b3](https://github.com/radoslav1992/vibeship/commit/fcbb7b39bc430f7a2e2d4135b95ad78aac669f2b))
+* маха подвеждащия брой тайни и описва двата пътя за публикуване ([d53e565](https://github.com/radoslav1992/vibeship/commit/d53e565d19cda41bfb4c97620bfd2ce1796a3e52))
+* превежда модала за вход и лимитите на български ([f1a6225](https://github.com/radoslav1992/vibeship/commit/f1a622599496fc38d8b53ccd2cbb207a86c1263c))
+* превежда модала за вход и текстовете за кредитите ([1673adc](https://github.com/radoslav1992/vibeship/commit/1673adc13ee5fb94d4ba53aa5329dd127faff86c))
+* свива sandbox контейнера до валидна конфигурация ([230dc3a](https://github.com/radoslav1992/vibeship/commit/230dc3a4b4cbf18d394a0562bb18abcbed1873b4))
+* свива sandbox контейнера до валидна конфигурация (оправя падналия deploy) ([b5ebe99](https://github.com/radoslav1992/vibeship/commit/b5ebe99580abc9d14e32cccbc1b938845d0bfb26))
+* спира wrangler да занулява CUSTOM_DOMAIN при всяко публикуване ([4764f7c](https://github.com/radoslav1992/vibeship/commit/4764f7c17b8d21ce32f19a290533d97b844ba991))
+
 ## [1.5.0](https://github.com/cloudflare/vibesdk/compare/v1.4.0...v1.5.0) (2026-02-03)
 
 
