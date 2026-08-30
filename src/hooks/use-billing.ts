@@ -2,11 +2,12 @@
  * Кукички за абонамента и кредитите.
  */
 
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient, type BillingPlansResponse } from '@/lib/api-client';
 import { queryKeys } from '@/lib/query-keys';
 import { useAuth } from '@/contexts/auth-context';
+import { appEvents } from '@/lib/app-events';
 import type { BillingSummary } from '../../shared/types/billing';
 
 async function fetchSummary(): Promise<BillingSummary> {
@@ -24,6 +25,7 @@ async function fetchPlans(): Promise<BillingPlansResponse> {
 /** Резюме на плана и кредитите на текущия потребител. */
 export function useBillingSummary() {
 	const { user } = useAuth();
+	const queryClient = useQueryClient();
 	const enabled = !!user;
 
 	const query = useQuery({
@@ -33,7 +35,27 @@ export function useBillingSummary() {
 		// Кредитите се менят при всяко съобщение до агента — държим ги свежи,
 		// но без да заливаме сървъра.
 		staleTime: 15_000,
+		// Връщането към таба е най-честият момент, в който салдото е остаряло.
+		refetchOnWindowFocus: true,
 	});
+
+	// Създаването на проект удържа кредити на сървъра, а изтриването променя
+	// колко активни проекта позволява планът. И в двата случая показаното
+	// салдо трябва да се опресни веднага, а не след изтичане на staleTime.
+	useEffect(() => {
+		if (!enabled) return;
+		const invalidate = () => {
+			void queryClient.invalidateQueries({
+				queryKey: queryKeys.account.billing.summary(user?.id),
+			});
+		};
+		const unsubscribeCreated = appEvents.on('app-created', invalidate);
+		const unsubscribeDeleted = appEvents.on('app-deleted', invalidate);
+		return () => {
+			unsubscribeCreated();
+			unsubscribeDeleted();
+		};
+	}, [enabled, queryClient, user?.id]);
 
 	return {
 		summary: query.data ?? null,

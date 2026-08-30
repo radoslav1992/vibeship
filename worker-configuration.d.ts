@@ -50,6 +50,9 @@ declare namespace Cloudflare {
 		STRIPE_PRICE_TEAM: string;
 		STRIPE_PRICE_PACK_100: string;
 		STRIPE_PRICE_PACK_300: string;
+		// Име на модела от Workers AI, който да се ползва през binding-а `AI`.
+		// Празно означава „моделът от каталога“.
+		WORKERS_AI_MODEL: string;
 		CodeGenObject: DurableObjectNamespace<import("./worker/index").CodeGeneratorAgent>;
 		Sandbox: DurableObjectNamespace<import("./worker/index").UserAppSandboxService>;
 		DORateLimitStore: DurableObjectNamespace<import("./worker/index").DORateLimitStore>;

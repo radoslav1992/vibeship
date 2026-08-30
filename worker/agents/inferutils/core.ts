@@ -15,6 +15,7 @@ import {
 import { CompletionSignal, Message, MessageContent, MessageRole } from './common';
 import { ToolCallResult, ToolDefinition, toOpenAITool } from '../tools/types';
 import { AgentActionKey, AI_MODEL_CONFIG, AIModelConfig, AIModels, InferenceMetadata, type InferenceRuntimeOverrides } from './config.types';
+import { createWorkersAiFetch, type WorkersAiBinding } from './workers-ai-fetch';
 import { RateLimitService } from '../../services/rate-limit/rateLimits';
 import { hasCloudflareConfigured } from '../../services/rate-limit/usageChecker';
 import { getUserConfigurableSettings } from '../../config';
@@ -761,7 +762,31 @@ export async function infer<OutputSchema extends z.ZodObject>({
         // Remove [*.] from model name
         modelName = modelName.replace(/\[.*?\]/, '');
 
-        const client = new OpenAI({ apiKey, baseURL: baseURL, defaultHeaders });
+        // Моделите на Workers AI минават през binding-а, а не по HTTP: така не
+        // им трябва ключ и не се минава през AI Gateway. Подменя се само
+        // `fetch`-ът, за да остане целият останал слой (стрийминг, tool calls,
+        // структуриран изход) непокътнат.
+        const useWorkersAiBinding =
+            modelConfig.provider === 'workers-ai' && Boolean((env as { AI?: unknown }).AI);
+        const workersAiFetch = useWorkersAiBinding
+            ? createWorkersAiFetch(
+                  (env as unknown as { AI: WorkersAiBinding }).AI,
+                  env.WORKERS_AI_MODEL,
+              )
+            : undefined;
+        if (modelConfig.provider === 'workers-ai' && !useWorkersAiBinding) {
+            throw new Error(
+                'Моделът е от Workers AI, но липсва binding-ът `AI`. Добави "ai": { "binding": "AI" } в wrangler.jsonc.',
+            );
+        }
+
+        const client = new OpenAI({
+            // Binding-ът не иска ключ; OpenAI SDK обаче отказва празен низ.
+            apiKey: useWorkersAiBinding ? 'workers-ai-binding' : apiKey,
+            baseURL: baseURL,
+            defaultHeaders: useWorkersAiBinding ? undefined : defaultHeaders,
+            ...(workersAiFetch ? { fetch: workersAiFetch } : {}),
+        });
         const schemaObj =
             schema && schemaName && !format
                 ? { response_format: buildJsonSchemaResponseFormat(schema, schemaName) }

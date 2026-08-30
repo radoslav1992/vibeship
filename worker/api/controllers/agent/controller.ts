@@ -27,7 +27,7 @@ import { hasTicketParam } from '../../../middleware/auth/ticketAuth';
 import { checkUsageAndBalance, getUserGateway } from '../../../services/rate-limit/usageChecker';
 import { readTokenCookie } from '../../../utils/oauthCookie';
 import { UsageLimitExceededError } from 'shared/types/errors';
-import { chargeCredits, checkProjectLimit } from '../../../services/billing/creditGuard';
+import { chargeCredits, checkProjectLimit, refundCredits } from '../../../services/billing/creditGuard';
 
 const defaultCodeGenArgs: Partial<CodeGenArgs> = {
     language: 'typescript',
@@ -57,6 +57,9 @@ export class CodingAgentController extends BaseController {
      * Start the incremental code generation process
      */
     static async startCodeGeneration(request: Request, env: Env, _: ExecutionContext, context: RouteContext): Promise<Response> {
+        // Пази удържаното за създаването, за да може да бъде върнато, ако
+        // нещо след таксуването се провали.
+        let chargedForCreation = 0;
         try {
             this.logger.info('Starting code generation process');
 
@@ -125,6 +128,7 @@ export class CodingAgentController extends BaseController {
             if (!creationCharge.ok) {
                 return CodingAgentController.createErrorResponse(creationCharge.reason ?? 'Няма достатъчно кредити', 402);
             }
+            chargedForCreation = creationCharge.charged ?? 0;
 
             const agentId = generateId();
             const modelConfigService = new ModelConfigService(env);
@@ -280,6 +284,10 @@ export class CodingAgentController extends BaseController {
                 } catch (error) {
                     const message = error instanceof Error ? error.message : String(error);
                     this.logger.error(`Agent ${agentId} initialization failed`, error);
+                    // Агентът не тръгна — потребителят не бива да плаща за това.
+                    await refundCredits(env, user.id, creationCharge.charged ?? 0, {
+                        description: 'Върнати кредити за непочнало генериране',
+                    });
                     await writer.write({ error: { message } }).catch(() => undefined);
                 } finally {
                     await writer.write("terminate").catch(() => undefined);
@@ -307,6 +315,13 @@ export class CodingAgentController extends BaseController {
             });
         } catch (error) {
             this.logger.error('Error starting code generation', error);
+            // Ако таксуването е минало, но създаването се е провалило след него,
+            // кредитите се връщат — иначе се плаща за нищо.
+            if (chargedForCreation > 0 && context.user) {
+                await refundCredits(env, context.user.id, chargedForCreation, {
+                    description: 'Върнати кредити за неуспешно създаване на проект',
+                });
+            }
             return CodingAgentController.handleError(error, 'start code generation');
         }
     }
